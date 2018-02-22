@@ -1,0 +1,27 @@
+/* Title: How to add shadow to view - iOS 
+ * Time: Thursday, 22 February 2018
+ * Author: Yu SUN
+ */
+
+1.Fade out shadow - General shadow
+	view.clipsToBounds = false // Implement this in case other change will have side effect 
+	view.layer.shadowColor = UIColor.black.cgColor
+	view.layer.shadowOpacity = 0.6 // Alpha of the shadow colour view.layer.shadowRadius = 3 // Blur Value of the shadow color view.layer.shadowOffset = CGSize(width: 0, height: -2) // width - x offset, height - y offset
+
+2. Part of View has shadow - e.g. shadow appear only bottom edge 
+	2.1 create a shadow view has the same feature as your target view
+		private lazy var shadowView: UIView = { 
+			let view: UIView = UIView()
+			view.translatesAutoresizingMaskIntoConstraints = false 
+			view.backgroundColor = UIColor.shadowColour 
+			view.layer.cornerRadius = 4
+			return view 
+		}()
+	2.2 Added the Target view as subView into Shadow 
+		shadowView.addSubview(targetView)
+	2.3 Adjust layout to achieve the shadow affection 
+		targetView.topAnchor.constraint(equalTo: shadowView.topAnchor), 
+		targetView.leftAnchor.constraint(equalTo: shadowView.leftAnchor), 
+		targetView.rightAnchor.constraint(equalTo: shadowView.rightAnchor),
+		targetView.bottomAnchor.constraint(equalTo: shadowView.bottomAnchor,  constant: -1)
+

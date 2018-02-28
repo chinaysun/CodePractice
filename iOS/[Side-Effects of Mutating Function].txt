@@ -1,0 +1,71 @@
+[Side-Effects of Mutating Function]
+
+While there is nothing wrong with this code, mutating functions lead to functions which have side-effects and are more likely to be buggy and harder to test, especially with complex code or multiple thread. Take the below case for example:
+
+Create a struct which stores an integer value and has a function to increment the value
+
+The different implementation for mutating and non-mutating (pure) functions are pretty similar:
+
+struct Test {
+    let value: Int
+    
+    mutating func increment() {
+        self = Test(value: value + 1)
+    }
+}
+struct Test {
+    let value: Int
+    
+    func increment() -> Test {
+        return Test(value: value + 1)
+    }
+}
+Now just for arguments sake, think of the two DispatchQueue.main.asyncAfter() calls as separate threads or complex functions which take an unknown amount of time:
+
+func doSomething() {
+    var test = Test(value: 1)
+
+    DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(50)) {
+        test.increment()
+        let result1 = test.value
+    }
+
+    DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(20)) {
+        test.increment()
+        let result2 = test.value
+    }
+
+    let result3 = test.value
+}
+In the above code the values will end up as follows:
+
+result1 = 3
+result2 = 2
+result3 = 1
+This is because the reference to test is being passed around and the reference itself is getting mutated (just like a variable in a class might be mutated).
+
+Now if we did a non-mutating function with the same logic:
+
+func doSomething() {
+    var test = Test(value: 1)
+
+    DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(50)) {
+        let result1 = test.incremented().value
+    }
+
+    DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(20)) {
+        let result2 = test.incremented().value
+    }
+
+    let result3 = test.value
+}
+Then the results would be
+
+result1 = 2
+result2 = 2
+result3 = 1
+Now while it's entirely possible to write bug-free code with mutating functions and they definitely have some benefits, they also make the code a little less developer-friendly for people who haven't worked on the code before. This is because primitive types and structs in Swift are immutable by default. In fact if you look through most functions Apple have they generally don't use mutating functions (they even removed the += and -= operators because they are mutating functions).
+
+Apple's pattern is to create functions more similar to your capitalizingFirstLetter() function, you can see this with their lowercased() and uppercased() functions.
+
+So my main concern with mutating functions is that good old "Random Developer X" will come along and start working on the project and assume that because an object is a struct, or a primitive, that the data won't suddenly change part-way through their code. And because of this they might write code which could be buggy if the data could suddenly change part-way through.

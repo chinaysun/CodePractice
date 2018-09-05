@@ -24,6 +24,13 @@
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string></string>
+	<key>UIAppFonts</key>
+	<array>
+		<string>NeueKabelW01-Medium.ttf</string>
+		<string>NeueKabelW01-Regular.ttf</string>
+		<string>NeueKabelW01-Bold.ttf</string>
+		<string>NeueKabelW01-ExtraBold.ttf</string>
+	</array>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>

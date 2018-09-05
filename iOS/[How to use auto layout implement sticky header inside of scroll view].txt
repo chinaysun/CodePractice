@@ -1,0 +1,34 @@
+
+/* Title: How to use auto layout implement sticky header inside of scroll view - iOS 
+ * Time: Wed, 05 Sep 2018
+ * Author: Yu SUN
+ * Code Example has been provided
+ */
+
+[ Requirement ]
+
+A part of view inside of UIScrollView should become sticky header when it reaches the top of screen. 
+In this case, we will say the second view inside of the scroll view will become sticky when it reaches the top.
+
+[ Auto layout Solution ]
+
+Step 1: Make a sticky header view
+set up shadowOffset/ shadowRadius / shadowColor
+
+Step 2: Add the view you want to be sticky into the StickyHeaderView
+
+Step 3: Layout
+
+	The key of layout we have to ensure the topAnchor of the stickyHeaderView is greater that the topAnchor of View and greater then the bottomAnchor of its previous view
+
+	********************************************************
+	stickyHeaderView.topAnchor.constraint(greaterThanOrEqualTo: view.safeAreaLayoutGuide.topAnchor)
+    stickyHeaderView.topAnchor.constraint(greaterThanOrEqualTo: firstView.bottomAnchor)
+    ********************************************************
+
+Step 4: Observer the scroll content offset
+	
+	We need to know the height of first View, when the contentOffSet is greater than the it, we need to set
+	the Shadow Oppacity with a value. When the offSet is smaller than the height of first view, we set the Oppacity back to zero
+
+
